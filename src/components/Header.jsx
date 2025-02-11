@@ -1,6 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 
 const Header = () => {
+  const [isSignInForm, setisSignInForm] = useState(true);
+
+  const toggleSignInform = () => {
+    setisSignInForm(!isSignInForm);
+    // if its true it will false if false it will true like a togglw function
+  };
+
   return (
     <div
       className="relative min-h-screen bg-cover bg-center"
@@ -20,8 +27,26 @@ const Header = () => {
       {/* Centered Form */}
       <div className="flex items-center justify-center min-h-screen">
         <div className="bg-black bg-opacity-80 p-10 rounded-lg shadow-lg w-[30rem] h-[34rem]">
-          <h1 className="text-3xl font-bold text-white mb-6">Sign In</h1>
+          <h1 className="text-3xl font-bold text-white mb-6">
+            {isSignInForm ? "Sign In" : "Sign Up"}
+            {/* here it will change if it is signin change to sign up */}
+          </h1>
           <form className="space-y-4">
+            <div>
+              {!isSignInForm && (
+                <input
+                  type="text"
+                  placeholder="Full Name"
+                  className="w-full p-4 text-white bg-gray-800 rounded focus:outline-none focus:ring focus:ring-red-600"
+                />
+              )}
+              <label htmlFor="Name" className="sr-only">
+                Full Name
+
+
+                {/* only apperare if true  */}
+              </label>
+            </div>
             <div>
               <label htmlFor="email" className="sr-only">
                 Email or mobile number
@@ -48,7 +73,7 @@ const Header = () => {
               type="submit"
               className="w-full py-4 text-white bg-red-600 rounded hover:bg-red-700"
             >
-              Sign In
+              {isSignInForm ? "Sign In" : "Sign Up"}
             </button>
           </form>
           <div className="text-center text-gray-400 mt-4">
@@ -76,12 +101,12 @@ const Header = () => {
             </div>
           </div>
           <div className="mt-6 text-center text-gray-400">
-            <p>
-              New to Netflix?{" "}
-              <a href="#" className="text-white hover:underline">
-                Sign up now.
-              </a>
+            <p className="py-4 cursor-pointer" onClick={toggleSignInform}>
+              {isSignInForm
+                ? "New to Netflix? Sign up now"
+                : "Already registered Sign In now...."}
             </p>
+
             <p className="mt-2 text-xs">
               This page is protected by Google reCAPTCHA to ensure you're not a
               bot.{" "}
