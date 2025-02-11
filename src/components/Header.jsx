@@ -19,7 +19,7 @@ const Header = () => {
 
       {/* Centered Form */}
       <div className="flex items-center justify-center min-h-screen">
-        <div className="bg-black bg-opacity-90 p-8 rounded-lg shadow-lg w-96">
+        <div className="bg-black bg-opacity-80 p-10 rounded-lg shadow-lg w-[30rem] h-[34rem]">
           <h1 className="text-3xl font-bold text-white mb-6">Sign In</h1>
           <form className="space-y-4">
             <div>
@@ -30,7 +30,7 @@ const Header = () => {
                 type="text"
                 id="email"
                 placeholder="Email or mobile number"
-                className="w-full p-3 text-white bg-gray-800 rounded focus:outline-none focus:ring focus:ring-red-600"
+                className="w-full p-4 text-white bg-gray-800 rounded focus:outline-none focus:ring focus:ring-red-600"
               />
             </div>
             <div>
@@ -41,12 +41,12 @@ const Header = () => {
                 type="password"
                 id="password"
                 placeholder="Password"
-                className="w-full p-3 text-white bg-gray-800 rounded focus:outline-none focus:ring focus:ring-red-600"
+                className="w-full p-4 text-white bg-gray-800 rounded focus:outline-none focus:ring focus:ring-red-600"
               />
             </div>
             <button
               type="submit"
-              className="w-full py-3 text-white bg-red-600 rounded hover:bg-red-700"
+              className="w-full py-4 text-white bg-red-600 rounded hover:bg-red-700"
             >
               Sign In
             </button>
