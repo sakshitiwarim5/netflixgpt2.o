@@ -18,7 +18,7 @@ const Header = () => {
       {/* Netflix Logo */}
       <div className="absolute top-0 left-0 p-4">
         <img
-          className="w-44"
+          className="w-46"
           src="http://www.freepnglogos.com/uploads/netflix-logo-0.png"
           alt="Netflix Logo"
         />
@@ -42,8 +42,6 @@ const Header = () => {
               )}
               <label htmlFor="Name" className="sr-only">
                 Full Name
-
-
                 {/* only apperare if true  */}
               </label>
             </div>
