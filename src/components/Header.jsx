@@ -1,11 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { checkValidData } from "../utils/validation";
 
 const Header = () => {
   const [isSignInForm, setisSignInForm] = useState(true);
 
+  // Use separate refs for email and password fields
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+
+  const handleButtonClick = () => {
+    // Get the email and password values
+    const emailValue = emailRef.current.value;
+    const passwordValue = passwordRef.current.value;
+
+    // Validate the form data
+    console.log(emailValue);
+    console.log(passwordValue);
+
+    const message = checkValidData(emailValue, passwordValue);
+    console.log(message);
+  };
+
   const toggleSignInform = () => {
     setisSignInForm(!isSignInForm);
-    // if its true it will false if false it will true like a togglw function
   };
 
   return (
@@ -18,7 +35,7 @@ const Header = () => {
       {/* Netflix Logo */}
       <div className="absolute top-0 left-0 p-4">
         <img
-          className="w-46"
+          className="w-44"
           src="http://www.freepnglogos.com/uploads/netflix-logo-0.png"
           alt="Netflix Logo"
         />
@@ -29,57 +46,65 @@ const Header = () => {
         <div className="bg-black bg-opacity-80 p-10 rounded-lg shadow-lg w-[30rem] h-[34rem]">
           <h1 className="text-3xl font-bold text-white mb-6">
             {isSignInForm ? "Sign In" : "Sign Up"}
-            {/* here it will change if it is signin change to sign up */}
           </h1>
-          <form className="space-y-4">
-            <div>
-              {!isSignInForm && (
-                <input
-                  type="text"
-                  placeholder="Full Name"
-                  className="w-full p-4 text-white bg-gray-800 rounded focus:outline-none focus:ring focus:ring-red-600"
-                />
-              )}
-              <label htmlFor="Name" className="sr-only">
-                Full Name
-                {/* only apperare if true  */}
-              </label>
-            </div>
+          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+            {/* Full Name Field - Only for Sign Up */}
+            {!isSignInForm && (
+              <input
+                ref={emailRef}
+                type="text"
+                placeholder="Full Name"
+                className="w-full p-4 text-white bg-gray-800 rounded focus:outline-none focus:ring focus:ring-red-600"
+              />
+            )}
+
+            {/* Email Field */}
             <div>
               <label htmlFor="email" className="sr-only">
                 Email or mobile number
               </label>
               <input
+                ref={emailRef}
                 type="text"
                 id="email"
                 placeholder="Email or mobile number"
                 className="w-full p-4 text-white bg-gray-800 rounded focus:outline-none focus:ring focus:ring-red-600"
               />
             </div>
+
+            {/* Password Field */}
             <div>
               <label htmlFor="password" className="sr-only">
                 Password
               </label>
               <input
+                ref={passwordRef}
                 type="password"
                 id="password"
                 placeholder="Password"
                 className="w-full p-4 text-white bg-gray-800 rounded focus:outline-none focus:ring focus:ring-red-600"
               />
             </div>
+
+            {/* Submit Button */}
             <button
               type="submit"
               className="w-full py-4 text-white bg-red-600 rounded hover:bg-red-700"
+              onClick={handleButtonClick}
             >
               {isSignInForm ? "Sign In" : "Sign Up"}
             </button>
           </form>
+
+          {/* Additional options */}
           <div className="text-center text-gray-400 mt-4">
             <p>OR</p>
             <button className="text-white hover:underline">
               Use a sign-in code
             </button>
           </div>
+
+          {/* Forgot Password and Remember Me */}
           <div className="flex justify-between text-sm text-gray-400 mt-4">
             <a href="#" className="hover:underline">
               Forgot password?
@@ -98,11 +123,13 @@ const Header = () => {
               </label>
             </div>
           </div>
+
+          {/* Toggle between Sign In and Sign Up */}
           <div className="mt-6 text-center text-gray-400">
             <p className="py-4 cursor-pointer" onClick={toggleSignInform}>
               {isSignInForm
                 ? "New to Netflix? Sign up now"
-                : "Already registered Sign In now...."}
+                : "Already registered? Sign In now...."}
             </p>
 
             <p className="mt-2 text-xs">
