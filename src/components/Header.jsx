@@ -3,7 +3,7 @@ import { checkValidData } from "../utils/validation";
 
 const Header = () => {
   const [isSignInForm, setisSignInForm] = useState(true);
-
+  const [errorMessage, setErrorMessage] = useState(null);
   // Use separate refs for email and password fields
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
@@ -18,7 +18,7 @@ const Header = () => {
     console.log(passwordValue);
 
     const message = checkValidData(emailValue, passwordValue);
-    console.log(message);
+    setErrorMessage(message);
   };
 
   const toggleSignInform = () => {
@@ -85,7 +85,7 @@ const Header = () => {
                 className="w-full p-4 text-white bg-gray-800 rounded focus:outline-none focus:ring focus:ring-red-600"
               />
             </div>
-
+            <p className="text-red-600">{errorMessage}</p>
             {/* Submit Button */}
             <button
               type="submit"

@@ -7,3 +7,6 @@
 -sign up form
 -form vaidators
 -useRef hooks
+-Firebase Setup
+-deploying our app to production
+-Create signup user account
