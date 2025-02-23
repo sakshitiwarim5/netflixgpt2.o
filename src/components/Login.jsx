@@ -3,59 +3,63 @@ import { checkValidData } from "../utils/validation";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
 import { auth } from "../utils/firebaseConfig";
+import { useNavigate } from "react-router-dom";
+
 const Login = () => {
-  const [isSignInForm, setisSignInForm] = useState(true);
+  const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
-  // Use separate refs for email and password fields
+  const [rememberMe, setRememberMe] = useState(false); // For checkbox state
+  const navigate = useNavigate();
+
   const nameRef = useRef(null);
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
+
   const handleButtonClick = () => {
-    // Get the email and password values
-    const emailValue = emailRef.current.value;
-    const passwordValue = passwordRef.current.value;
+    const email = emailRef.current.value;
+    const password = passwordRef.current.value;
 
-    // Validate the form data
-    console.log(emailValue);
-    console.log(passwordValue);
+    // Validate inputs
+    const validationMessage = checkValidData(email, password);
+    if (validationMessage) {
+      setErrorMessage(validationMessage);
+      return;
+    }
 
-    const message = checkValidData(emailValue, passwordValue);
-    setErrorMessage(message);
-    if (message) return;
-
-    // Sign-up logic
+    // Authentication logic
     if (!isSignInForm) {
-      createUserWithEmailAndPassword(auth, emailValue, passwordValue)
+      // Sign Up
+      createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-          // Signed up
           const user = userCredential.user;
-          console.log("User signed up:", user);
+          return updateProfile(user, {
+            displayName: nameRef.current.value,
+          });
+        })
+        .then(() => {
+          navigate("/browser");
         })
         .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          setErrorMessage(errorCode + ": " + errorMessage);
+          setErrorMessage(error.code + ": " + error.message);
         });
     } else {
-      signInWithEmailAndPassword(auth, emailValue, passwordValue)
-        .then((userCredential) => {
-          // Signed in
-          const user = userCredential.user;
-          console.log(user);
-          // ...
+      // Sign In
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          navigate("/browser");
         })
         .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          setErrorMessage(errorCode + ": " + errorMessage);
+          setErrorMessage(error.code + ": " + error.message);
         });
     }
   };
 
-  const toggleSignInform = () => {
-    setisSignInForm(!isSignInForm);
+  const toggleSignInForm = () => {
+    setIsSignInForm(!isSignInForm);
+    setErrorMessage(null);
   };
 
   return (
@@ -74,51 +78,46 @@ const Login = () => {
         />
       </div>
 
-      {/* Centered Form */}
+      {/* Login Form */}
       <div className="flex items-center justify-center min-h-screen">
         <div className="bg-black bg-opacity-80 p-10 rounded-lg shadow-lg w-[30rem] h-[34rem]">
           <h1 className="text-3xl font-bold text-white mb-6">
             {isSignInForm ? "Sign In" : "Sign Up"}
           </h1>
+
           <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-            {/* Full Name Field - Only for Sign Up */}
+            {/* Name Field (Sign Up Only) */}
             {!isSignInForm && (
               <input
-                ref={emailRef}
+                ref={nameRef}
                 type="text"
                 placeholder="Full Name"
                 className="w-full p-4 text-white bg-gray-800 rounded focus:outline-none focus:ring focus:ring-red-600"
+                required
               />
             )}
 
             {/* Email Field */}
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email or mobile number
-              </label>
-              <input
-                ref={nameRef}
-                type="text"
-                id="email"
-                placeholder="Email or mobile number"
-                className="w-full p-4 text-white bg-gray-800 rounded focus:outline-none focus:ring focus:ring-red-600"
-              />
-            </div>
+            <input
+              ref={emailRef}
+              type="email"
+              placeholder="Email address"
+              className="w-full p-4 text-white bg-gray-800 rounded focus:outline-none focus:ring focus:ring-red-600"
+              required
+            />
 
             {/* Password Field */}
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                ref={passwordRef}
-                type="password"
-                id="password"
-                placeholder="Password"
-                className="w-full p-4 text-white bg-gray-800 rounded focus:outline-none focus:ring focus:ring-red-600"
-              />
-            </div>
-            <p className="text-red-600">{errorMessage}</p>
+            <input
+              ref={passwordRef}
+              type="password"
+              placeholder="Password"
+              className="w-full p-4 text-white bg-gray-800 rounded focus:outline-none focus:ring focus:ring-red-600"
+              required
+            />
+
+            {/* Error Message */}
+            {errorMessage && <p className="text-red-600">{errorMessage}</p>}
+
             {/* Submit Button */}
             <button
               type="submit"
@@ -129,15 +128,15 @@ const Login = () => {
             </button>
           </form>
 
-          {/* Additional options */}
+          {/* Additional Options */}
           <div className="text-center text-gray-400 mt-4">
             <p>OR</p>
-            <button className="text-white hover:underline">
+            <button className="text-white hover:underline mt-2">
               Use a sign-in code
             </button>
           </div>
 
-          {/* Forgot Password and Remember Me */}
+          {/* Remember Me & Forgot Password */}
           <div className="flex justify-between text-sm text-gray-400 mt-4">
             <a href="#" className="hover:underline">
               Forgot password?
@@ -146,6 +145,8 @@ const Login = () => {
               <input
                 type="checkbox"
                 id="remember-me"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
                 className="h-4 w-4 text-red-600 bg-gray-800 border-gray-700 rounded focus:ring-red-600"
               />
               <label
@@ -157,14 +158,18 @@ const Login = () => {
             </div>
           </div>
 
-          {/* Toggle between Sign In and Sign Up */}
+          {/* Form Toggle */}
           <div className="mt-6 text-center text-gray-400">
-            <p className="py-4 cursor-pointer" onClick={toggleSignInform}>
+            <p
+              className="py-4 cursor-pointer hover:underline"
+              onClick={toggleSignInForm}
+            >
               {isSignInForm
                 ? "New to Netflix? Sign up now"
-                : "Already registered? Sign In now...."}
+                : "Already registered? Sign In now."}
             </p>
 
+            {/* Captcha Notice */}
             <p className="mt-2 text-xs">
               This page is protected by Google reCAPTCHA to ensure you're not a
               bot.{" "}
