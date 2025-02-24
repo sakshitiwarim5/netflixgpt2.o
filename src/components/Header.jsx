@@ -1,92 +1,52 @@
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { auth } from "../utils/firebaseConfig";
 import { useNavigate } from "react-router-dom";
-import { LOGO, SUPPORTED_LANGUAGES } from "../utils/constants";
-import { auth } from "../utils/firebase";
-import { addUser, removeUser } from "../utils/userSlice";
-import { toggleGptSearchView } from "../utils/gptSlice";
-import { changeLanguage } from "../utils/configSlice";
+import { signOut } from "firebase/auth";
+import { useSelector } from "react-redux";
 
 const Header = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((store) => store.user);
-  const showGptSearch = useSelector((store) => store.gpt.showGptSearch);
+
   const handleSignOut = () => {
     signOut(auth)
-      .then(() => {})
-      .catch((error) => {
-        navigate("/error");
-      });
-  };
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const { uid, email, displayName, photoURL } = user;
-        dispatch(
-          addUser({
-            uid: uid,
-            email: email,
-            displayName: displayName,
-            photoURL: photoURL,
-          })
-        );
-        navigate("/browse");
-      } else {
-        dispatch(removeUser());
-        navigate("/");
-      }
-    });
-
-    // Unsiubscribe when component unmounts
-    return () => unsubscribe();
-  }, []);
-
-  const handleGptSearchClick = () => {
-    // Toggle GPT Search
-    dispatch(toggleGptSearchView());
-  };
-
-  const handleLanguageChange = (e) => {
-    dispatch(changeLanguage(e.target.value));
+      .then(() => navigate("/"))
+      .catch((error) => navigate("/error"));
   };
 
   return (
-    <div className="absolute w-screen px-8 py-2 bg-gradient-to-b from-black z-10 flex flex-col md:flex-row justify-between">
-      <img className="w-44 mx-auto md:mx-0" src={LOGO} alt="logo" />
-      {user && (
-        <div className="flex p-2 justify-between">
-          {showGptSearch && (
-            <select
-              className="p-2 m-2 bg-gray-900 text-white"
-              onChange={handleLanguageChange}
-            >
-              {SUPPORTED_LANGUAGES.map((lang) => (
-                <option key={lang.identifier} value={lang.identifier}>
-                  {lang.name}
-                </option>
-              ))}
-            </select>
-          )}
+    <div className="relative flex items-center justify-between p-4">
+      {/* Netflix Logo */}
+      <div className="absolute top-0 left-0 p-4">
+        <img
+          className="w-44"
+          src="http://www.freepnglogos.com/uploads/netflix-logo-0.png"
+          alt="Netflix Logo"
+        />
+      </div>
+
+      {/* User Icon and Sign Out Button */}
+      <div className="absolute top-0 right-0 p-4 flex items-center space-x-4">
+        <img
+          className="w-12 h-12 rounded-md object-cover"
+          alt="User Icon"
+          src={user?.photoURL || "https://example.com/default-profile.png"}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "https://example.com/default-profile.png";
+          }}
+        />
+        {user && (
           <button
-            className="py-2 px-4 mx-4 my-2 bg-purple-800 text-white rounded-lg"
-            onClick={handleGptSearchClick}
+            onClick={handleSignOut}
+            className="text-white bg-red-600 px-4 py-2 rounded hover:bg-red-700 transition-colors"
           >
-            {showGptSearch ? "Homepage" : "GPT Search"}
+            Sign Out
           </button>
-          <img
-            className="hidden md:block w-12 h-12"
-            alt="usericon"
-            src={user?.photoURL}
-          />
-          <button onClick={handleSignOut} className="font-bold text-white ">
-            (Sign Out)
-          </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
+
 export default Header;
