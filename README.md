@@ -12,4 +12,6 @@
 -Create signup user account
 -Implement Sign In user Api
 -Created Redux Store with userslice
--
+-implement sign out feature
+-updateprofile
+-movie featch from tmdb

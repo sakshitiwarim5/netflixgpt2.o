@@ -7,13 +7,15 @@ import {
 } from "firebase/auth";
 import { auth } from "../utils/firebaseConfig";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/userSlice";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const nameRef = useRef(null);
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
@@ -42,6 +44,8 @@ const Login = () => {
             })
             .then(() => {
               console.log("Updated User Info:", auth.currentUser);
+              const { uid, email, displayName, photoURL } = auth.currentUser;
+              dispatch(addUser({ uid, email, displayName, photoURL }));
               navigate("/browser");
             });
         })
