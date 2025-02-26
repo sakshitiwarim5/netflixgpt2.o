@@ -1,9 +1,10 @@
 # Netflix GPT
+
 -create react app
 -configured tailwindcss
 -header
 -routing of app
--ogin form
+-Login form
 -sign up form
 -form vaidators
 -useRef hooks
@@ -15,3 +16,4 @@
 -implement sign out feature
 -updateprofile
 -movie featch from tmdb
+-BugFix : sign up user displaye name profile picture
