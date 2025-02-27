@@ -3,6 +3,7 @@ import { auth } from "../utils/firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { useSelector } from "react-redux";
+import { LOGO } from "../utils/constant";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -18,11 +19,7 @@ const Header = () => {
     <div className="relative flex items-center justify-between p-4">
       {/* Netflix Logo */}
       <div className="absolute top-0 left-0 p-4">
-        <img
-          className="w-44"
-          src="http://www.freepnglogos.com/uploads/netflix-logo-0.png"
-          alt="Netflix Logo"
-        />
+        <img className="w-44" src={LOGO} alt="Netflix Logo" />
       </div>
 
       {/* User Icon and Sign Out Button */}
