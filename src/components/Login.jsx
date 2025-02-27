@@ -9,6 +9,8 @@ import { auth } from "../utils/firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
+import { LOGO } from "../utils/constant";
+import { USER_AVATAR } from "../utils/constant";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
@@ -37,7 +39,7 @@ const Login = () => {
           const user = userCredential.user;
           return updateProfile(user, {
             displayName: nameRef.current.value,
-            photoURL: "https://avatars.githubusercontent.com/u/133300118?v=4",
+            photoURL:                                                 USER_AVATAR,
           })
             .then(() => {
               return auth.currentUser.reload(); // Reload user to get updated data
@@ -78,11 +80,7 @@ const Login = () => {
     >
       {/* Netflix Logo */}
       <div className="absolute top-0 left-0 p-4">
-        <img
-          className="w-44"
-          src="http://www.freepnglogos.com/uploads/netflix-logo-0.png"
-          alt="Netflix Logo"
-        />
+        <img className="w-44" src={LOGO} alt="Netflix Logo" />
       </div>
 
       {/* Login Form */}
