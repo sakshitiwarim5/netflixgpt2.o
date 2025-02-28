@@ -1,11 +1,26 @@
-import React from 'react'
-import Header from './Header'
-
+import React, { useEffect } from "react";
+import Header from "./Header";
+import { API_OPTIONS } from "../utils/constant";
 const Browser = () => {
-  return (
-    <div><Header/>
-    </div>
-  )
-}
+  const getNowplaying = async () => {
+    const data = await fetch(
+      "https://api.themoviedb.org/3/movie/now_playing?page=1",
+      API_OPTIONS
+    );
+    const json = await data.json();
+    console.log(json);
+    //this will convert it into json formate and display using console.log
+  };
+  //we are calling the funtion in using useEffect so that it will be in infinite loop it render once
+  useEffect(() => {
+    getNowplaying();
+  }, []);
 
-export default Browser
+  return (
+    <div>
+      <Header />
+    </div>
+  );
+};
+
+export default Browser;
