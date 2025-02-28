@@ -16,14 +16,14 @@ const Header = () => {
   };
 
   return (
-    <div className="relative flex items-center justify-between p-4">
+    <div className="relative w-full h-20 flex items-center justify-between px-6 bg-black">
       {/* Netflix Logo */}
-      <div className="absolute top-0 left-0 p-4">
+      <div className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10">
         <img className="w-44" src={LOGO} alt="Netflix Logo" />
       </div>
 
       {/* User Icon and Sign Out Button */}
-      <div className="absolute top-0 right-0 p-4 flex items-center space-x-4">
+      <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex items-center space-x-4 z-10">
         <img
           className="w-12 h-12 rounded-md object-cover"
           alt="User Icon"
