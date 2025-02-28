@@ -21,3 +21,10 @@
 -Add hardcoded values to the contstants file
 - register TMDB API and create an app & get access token 
 - get data from TMDB now playing movies list API
+-custom hook for Now Playing Movies List
+-Create movieSlice
+-update store with movies data from
+-planning for maincontainer & secondary container
+-Fetch Data for Trailer Video
+- update store with Trailer Video data
+- Embedded the youtube vedio make it auto play
