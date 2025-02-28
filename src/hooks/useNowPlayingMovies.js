@@ -18,10 +18,10 @@ const useNowPlayingMovies = () => {
       }
 
       const json = await response.json();
-      console.log("Fetched Movies:", json); // ✅ Log API response
+    //   console.log("Fetched Movies:", json); // ✅ Log API response
       dispatch(addNowPlayingMovies(json.results)); // ✅ Dispatch to Redux store
     } catch (error) {
-      console.error("Error fetching movies:", error);
+    //   console.error("Error fetching movies:", error);
     }
   };
 
