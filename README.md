@@ -17,3 +17,7 @@
 -updateprofile
 -movie featch from tmdb
 -BugFix : sign up user displaye name profile picture
+-unsubscribed to the onAuthStateChanged callback
+-Add hardcoded values to the contstants file
+- register TMDB API and create an app & get access token 
+- get data from TMDB now playing movies list API
