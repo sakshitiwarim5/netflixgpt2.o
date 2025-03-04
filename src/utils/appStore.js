@@ -1,12 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-import userReducer from "./userSlice"; // Ensure correct reducer name
-import movieReducer from "./movieSlice"; // Ensure correct reducer name
+import userReducer from "./userSlice";
+import movieReducer from "./movieSlice";
+import gptReducer from "./gptSlice";
+
 const appStore = configureStore({
-  // Fix typo here
   reducer: {
-    user: userReducer, // Ensure correct variable name
+    user: userReducer,
     movie: movieReducer,
+    gpt: gptReducer,
   },
 });
 

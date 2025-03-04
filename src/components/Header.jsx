@@ -2,17 +2,23 @@ import React from "react";
 import { auth } from "../utils/firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { LOGO } from "../utils/constant";
+import { toggleGptSearchView } from "../utils/gptSlice";
 
 const Header = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch(); // Added useDispatch hook
   const user = useSelector((store) => store.user);
 
   const handleSignOut = () => {
     signOut(auth)
       .then(() => navigate("/"))
-      .catch((error) => navigate("/error"));
+      .catch(() => navigate("/error"));
+  };
+
+  const handleGptSearchClick = () => {
+    dispatch(toggleGptSearchView());
   };
 
   return (
@@ -34,12 +40,20 @@ const Header = () => {
           }}
         />
         {user && (
-          <button
-            onClick={handleSignOut}
-            className="text-white bg-red-600 px-4 py-2 rounded hover:bg-red-700 transition-colors"
-          >
-            Sign Out
-          </button>
+          <div className="flex space-x-4">
+            <button
+              onClick={handleGptSearchClick}
+              className="py-2 px-4 bg-purple-800 text-white rounded-lg"
+            >
+              GPT Search
+            </button>
+            <button
+              onClick={handleSignOut}
+              className="text-white bg-red-600 px-4 py-2 rounded hover:bg-red-700 transition-colors"
+            >
+              Sign Out
+            </button>
+          </div>
         )}
       </div>
     </div>
