@@ -30,3 +30,4 @@
 - update store with Trailer Video data
 - Embedded the youtube vedio make it auto play
   -Build secondary components
+- Adding gpt search feauture for the website
