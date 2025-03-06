@@ -12,9 +12,9 @@ const SecondaryContainer = () => {
           {/* Adjusted margin */}
           <Movielist title={"Now Playing"} movies={movie.nowPlayingMovies} />
           <Movielist title={"Trending"} movies={movie.nowPlayingMovies} />
-          <Movielist title={"Popular"} movies={movie.popularMovies} />
+          <Movielist title={"Popular.."} movies={movie.popularMovies} />
           <Movielist
-            title={"Upcoming Movies"}
+            title={"Upcoming Movies.."}
             movies={movie.nowPlayingMovies}
           />
           <Movielist title={"Horror"} movies={movie.nowPlayingMovies} />
