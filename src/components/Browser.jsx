@@ -8,11 +8,12 @@ import GptSearch from "./GptSearch";
 import { useSelector } from "react-redux";
 
 const Browser = () => {
-  useNowPlayingMovies();
-  usePopularMovies();
-
-  // Get showGptSearch state from Redux
+  // Renamed from "Browser" to "Browse" (common convention)
   const showGptSearch = useSelector((store) => store.gpt.showGptSearch);
+
+  // Fetch data ONLY when GPT search is inactive
+  useNowPlayingMovies(!showGptSearch);
+  usePopularMovies(!showGptSearch);
 
   return (
     <div>

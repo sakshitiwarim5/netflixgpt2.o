@@ -5,11 +5,19 @@ import { signOut } from "firebase/auth";
 import { useSelector, useDispatch } from "react-redux";
 import { LOGO } from "../utils/constant";
 import { toggleGptSearchView } from "../utils/gptSlice";
+import { changeLanguage } from "../utils/configSlice";
+
+const SUPPORTED_LANGUAGES = [
+  { identifier: "en", name: "English" },
+  { identifier: "hindi", name: "हिन्दी" },
+  { identifier: "spanish", name: "Español" },
+];
 
 const Header = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch(); // Added useDispatch hook
+  const dispatch = useDispatch();
   const user = useSelector((store) => store.user);
+  const showGptSearch = useSelector((store) => store.gpt.showGptSearch);
 
   const handleSignOut = () => {
     signOut(auth)
@@ -19,6 +27,10 @@ const Header = () => {
 
   const handleGptSearchClick = () => {
     dispatch(toggleGptSearchView());
+  };
+
+  const handleLanguageChange = (e) => {
+    dispatch(changeLanguage(e.target.value));
   };
 
   return (
@@ -41,11 +53,24 @@ const Header = () => {
         />
         {user && (
           <div className="flex space-x-4">
+            {showGptSearch && (
+              <select
+                className="p-2 m-2 bg-gray-900 text-white"
+                onChange={handleLanguageChange}
+              >
+                {SUPPORTED_LANGUAGES.map((lang) => (
+                  <option key={lang.identifier} value={lang.identifier}>
+                    {lang.name}
+                  </option>
+                ))}
+              </select>
+            )}
+
             <button
               onClick={handleGptSearchClick}
               className="py-2 px-4 bg-purple-800 text-white rounded-lg"
             >
-              GPT Search
+              {showGptSearch ? "Homepage" : "GPT Search"}
             </button>
             <button
               onClick={handleSignOut}

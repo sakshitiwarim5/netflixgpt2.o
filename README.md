@@ -31,3 +31,4 @@
 - Embedded the youtube vedio make it auto play
   -Build secondary components
 - Adding gpt search feauture for the website
+-added language search in hindi , english ,spanish
