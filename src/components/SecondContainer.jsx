@@ -10,7 +10,7 @@ const SecondaryContainer = () => {
         <div className="-mt-40 pl-12 relative z-20">
           {" "}
           {/* Adjusted margin */}
-          <Movielist title={"Now Playing"} movies={movie.nowPlayingMovies} />
+          <Movielist title={"Now Playing.."} movies={movie.nowPlayingMovies} />
           <Movielist title={"Trending"} movies={movie.nowPlayingMovies} />
           <Movielist title={"Popular.."} movies={movie.popularMovies} />
           <Movielist
