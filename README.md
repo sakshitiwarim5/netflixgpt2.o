@@ -32,3 +32,5 @@
   -Build secondary components
 - Adding gpt search feauture for the website
 -added language search in hindi , english ,spanish
+- Multi -language feature 
+-Integrate GPT APIs( get open source )
