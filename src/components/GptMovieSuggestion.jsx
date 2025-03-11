@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useSelector } from "react-redux";
 import Movielist from "./Movielist";
 
@@ -20,3 +21,14 @@ const GptMovieSuggestion = () => {
   );
 };
 export default GptMovieSuggestion;
+=======
+import React from 'react'
+
+const GptMovieSuggestion = () => {
+  return (
+    <div>GptMovieSuggestion</div>
+  )
+}
+
+export default GptMovieSuggestion
+>>>>>>> 8513020cf76dd3ca34ae00a4d87a2d880191745b
