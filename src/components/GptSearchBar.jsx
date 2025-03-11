@@ -1,68 +1,107 @@
-<<<<<<< HEAD
-import React, { useRef } from "react";
-import { useSelector, useDispatch } from "react-redux"; // ✅ Import useDispatch
+import React, { useRef, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import lang from "../utils/languageConstants";
-import { openai } from "../utils/Openai";
-import { API_OPTIONS } from "../utils/constants";
-import { addGptMovieResult } from "../store/movieSlice"; // ✅ Import the action
+import openai from "../utils/Openai";
+import { API_OPTIONS } from "../utils/constant";
+import { addGptMovieResult } from "../utils/movieSlice";
 
 const GptSearchBar = () => {
   const langKey = useSelector((store) => store.config.lang);
-  const dispatch = useDispatch(); // ✅ Define dispatch
+  const dispatch = useDispatch();
   const searchText = useRef(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  // ✅ Async function to search movies on TMDB
+  // ✅ Fetch movie from TMDB
   const searchMovieTMDB = async (movie) => {
-    const response = await fetch(
-      `https://api.themoviedb.org/3/search/movie?query=${movie}&include_adult=false&language=en-US&page=1`,
-      API_OPTIONS
-    );
-    const json = await response.json();
-    return json.results;
+    try {
+      const response = await fetch(
+        `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(
+          movie
+        )}&include_adult=false&language=en-US&page=1`,
+        API_OPTIONS
+      );
+
+      if (!response.ok) {
+        throw new Error(`TMDB API error: ${response.status}`);
+      }
+
+      const json = await response.json();
+      return json.results || [];
+    } catch (err) {
+      console.error("Error fetching movie from TMDB:", err);
+      return [];
+    }
+  };
+
+  // ✅ Implement Exponential Backoff for Rate Limits
+  const fetchGPTResultsWithRetry = async (query, retries = 3, delay = 1000) => {
+    try {
+      return await openai.chat.completions.create({
+        messages: [{ role: "user", content: query }],
+        model: "gpt-3.5-turbo",
+      });
+    } catch (err) {
+      if (err.response?.status === 429 && retries > 0) {
+        console.warn(`Rate limit exceeded. Retrying in ${delay}ms...`);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+        return fetchGPTResultsWithRetry(query, retries - 1, delay * 2);
+      }
+      throw err;
+    }
   };
 
   const handleGptSearchClick = async () => {
+    const query = searchText.current.value.trim();
+
+    if (!query) {
+      setError("Please enter a search term!");
+      return;
+    }
+
+    setError("");
+    setLoading(true);
+
     try {
-      console.log(searchText.current.value);
+      console.log("User Query:", query);
 
-      // ✅ Corrected GPT Query
-      const gptQuery =
-        "Act as a Movie Recommendation system and suggest some movies for the query '" +
-        searchText.current.value +
-        "' only give me names of 5 movies, comma separated like the example result given ahead. Example Result: Gadar, DDLJ, BabySitter, Escape, Choose or Die";
+      const gptQuery = `Act as a Movie Recommendation system and suggest some movies for the query '${query}'. Only provide the names of 5 movies, comma-separated. Example: Gadar, DDLJ, BabySitter, Escape, Choose or Die`;
 
-      // ✅ Fetch GPT movie recommendations
-      const gptResults = await openai.chat.completions.create({
-        messages: [{ role: "user", content: gptQuery }],
-        model: "gpt-3.5-turbo",
-      });
+      const gptResults = await fetchGPTResultsWithRetry(gptQuery);
 
-      if (!gptResults.choices || !gptResults.choices.length) {
-        console.error("No GPT movie recommendations found.");
-        return;
+      if (!gptResults.choices || gptResults.choices.length === 0) {
+        throw new Error("No GPT movie recommendations found.");
       }
 
-      console.log("GPT Response:", gptResults.choices?.[0]?.message?.content);
-
-      // ✅ Extract movie names from GPT response
       const gptMovies = gptResults.choices[0].message.content
         .split(",")
         .map((movie) => movie.trim());
 
-      // ✅ Fetch movie details from TMDB API for each movie name
-      const promiseArray = gptMovies.map((movie) => searchMovieTMDB(movie));
+      console.log("GPT Response Movies:", gptMovies);
 
-      // ✅ Wait for all API calls to complete
-      const tmdbResults = await Promise.all(promiseArray);
+      // ✅ Fetch TMDB details for each movie
+      const tmdbResults = await Promise.all(
+        gptMovies.map((movie) => searchMovieTMDB(movie))
+      );
 
       console.log("TMDB Results:", tmdbResults);
 
-      // ✅ Dispatch the results to Redux store
+      // ✅ Dispatch results to Redux
       dispatch(
         addGptMovieResult({ movieNames: gptMovies, movieResults: tmdbResults })
       );
-    } catch (error) {
-      console.error("Error in GPT Search:", error);
+    } catch (err) {
+      console.error("Error in GPT Search:", err);
+
+      if (err.response?.status === 429) {
+        setError(
+          "OpenAI API rate limit exceeded! Please check your plan or try again later."
+        );
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,32 +118,17 @@ const GptSearchBar = () => {
           placeholder={lang?.[langKey]?.gptSearchPlaceholder || "Search..."}
         />
         <button
-          className="col-span-3 m-4 py-2 px-4 bg-red-700 text-white rounded-lg"
+          className={`col-span-3 m-4 py-2 px-4 text-white rounded-lg ${
+            loading ? "bg-gray-500" : "bg-red-700"
+          }`}
           onClick={handleGptSearchClick}
-=======
-import React from "react";
-import { useSelector } from "react-redux";
-import lang from "../utils/languageConstants"; // Import lang if stored in a separate file
-
-const GptSearchBar = () => {
-  const langKey = useSelector((store) => store.config.lang);
-
-  return (
-    <div className="pt-[35%] md:pt-[10%] flex justify-center">
-      <form className="w-full md:w-1/2 bg-black grid grid-cols-12">
-        <input
-          type="text"
-          className="p-4 m-4 col-span-9"
-          placeholder={lang?.[langKey]?.gptSearchPlaceholder || "Search..."} // Handle undefined case
-        />
-        <button
-          className="col-span-3 m-4 py-2 px-4 bg-red-700 text-white rounded-lg"
-          onClick={() => console.log("Search clicked")} // Temporary function
->>>>>>> 8513020cf76dd3ca34ae00a4d87a2d880191745b
+          disabled={loading}
         >
-          {lang?.[langKey]?.search || "Search"}
+          {loading ? "Searching..." : lang?.[langKey]?.search || "Search"}
         </button>
       </form>
+
+      {error && <p className="text-red-500 text-center mt-2">{error}</p>}
     </div>
   );
 };
