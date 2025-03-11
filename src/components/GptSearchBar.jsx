@@ -1,8 +1,8 @@
 import React, { useRef } from "react";
 import { useSelector, useDispatch } from "react-redux"; // ✅ Import useDispatch
 import lang from "../utils/languageConstants";
-import { openai } from "../utils/Openai";
-import { API_OPTIONS } from "../utils/constant";
+import openai from "../utils/Openai"; // ✅ Fixed import (no named export)
+import { API_OPTIONS } from "../utils/constant"; // ✅ Fixed import path
 import { addGptMovieResult } from "../utils/movieSlice"; // ✅ Import the action
 
 const GptSearchBar = () => {

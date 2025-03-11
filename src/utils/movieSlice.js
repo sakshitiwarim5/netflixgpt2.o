@@ -5,25 +5,30 @@ const movieSlice = createSlice({
   initialState: {
     nowPlayingMovies: [],
     trailerVideos: [],
-    popularMovies: [],
-    // ✅ Ensure it's an empty array
+    popularMovies: [], // ✅ Ensure it's correctly named
+    gptMovieResults: [], // ✅ Added this to store GPT results
   },
   reducers: {
     addNowPlayingMovies: (state, action) => {
-      //   console.log("Dispatching Movies to Redux:", action.payload); // ✅ Log when movies are added
       state.nowPlayingMovies = action.payload || [];
     },
     addPopularMovies: (state, action) => {
-      //   console.log("Dispatching Movies to Redux:", action.payload); // ✅ Log when movies are added
-      state.nowPopularMovies = action.payload || [];
+      state.popularMovies = action.payload || []; // ✅ Fixed property name
     },
     addTrailerVideos: (state, action) => {
       state.trailerVideos = action.payload || [];
     },
+    addGptMovieResult: (state, action) => {
+      state.gptMovieResults = action.payload || []; // ✅ Added missing reducer
+    },
   },
 });
 
-export const { addNowPlayingMovies, addTrailerVideos, addPopularMovies } =
-  movieSlice.actions;
+export const {
+  addNowPlayingMovies,
+  addTrailerVideos,
+  addPopularMovies,
+  addGptMovieResult,
+} = movieSlice.actions;
 
 export default movieSlice.reducer;
