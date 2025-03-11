@@ -1,33 +1,36 @@
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux"; // ✅ Added useSelector
 import { API_OPTIONS } from "../utils/constant";
-import { addPopularMovies } from "../utils/movieSlice";
+import { addPopularMovies } from "../utils/movieSlice"; // ✅ Correct action import
 
 const usePopularMovies = () => {
-  const dispatch = useDispatch(); // Ensure dispatch is defined
+  const dispatch = useDispatch();
+  const popularMovies = useSelector((store) => store.movies.popularMovies);
 
   const getPopularMovies = async () => {
     try {
       const response = await fetch(
-        "https://api.themoviedb.org/3/movie/popular",
+        "https://api.themoviedb.org/3/movie/popular?page=1", // ✅ Added pagination
         API_OPTIONS
       );
 
-      if (!response.ok) {
+      if (!response.ok)
         throw new Error(`HTTP error! Status: ${response.status}`);
-      }
 
-      const json = await response.json();
-      //   console.log("Fetched Movies:", json); // ✅ Log API response
-      dispatch(addPopularMovies(json.results)); // ✅ Dispatch to Redux store
+      const data = await response.json();
+      dispatch(addPopularMovies(data.results));
     } catch (error) {
-      //   console.error("Error fetching movies:", error);
+      console.error("Error fetching popular movies:", error);
+      // ✅ Consider adding error state handling
     }
   };
 
   useEffect(() => {
-    getPopularMovies();
-  }, []);
+    // ✅ Check if movies array is empty, not just falsy
+    if (!popularMovies?.length) getPopularMovies();
+  }, [dispatch, popularMovies?.length]); // ✅ Added proper dependencies
+
+  return null; // ✅ Custom hooks should return nothing or cleanup
 };
 
 export default usePopularMovies;
