@@ -2,8 +2,8 @@ import React, { useRef } from "react";
 import { useSelector, useDispatch } from "react-redux"; // ✅ Import useDispatch
 import lang from "../utils/languageConstants";
 import { openai } from "../utils/Openai";
-import { API_OPTIONS } from "../utils/constants";
-import { addGptMovieResult } from "../store/movieSlice"; // ✅ Import the action
+import { API_OPTIONS } from "../utils/constant";
+import { addGptMovieResult } from "../utils/movieSlice"; // ✅ Import the action
 
 const GptSearchBar = () => {
   const langKey = useSelector((store) => store.config.lang);
