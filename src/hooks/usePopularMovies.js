@@ -21,7 +21,6 @@ const usePopularMovies = () => {
       dispatch(addPopularMovies(data.results));
     } catch (error) {
       console.error("Error fetching popular movies:", error);
-      // ✅ Consider adding error state handling
     }
   };
 
@@ -30,7 +29,7 @@ const usePopularMovies = () => {
     if (!popularMovies?.length) getPopularMovies();
   }, [dispatch, popularMovies?.length]); // ✅ Added proper dependencies
 
-  return null; // ✅ Custom hooks should return nothing or cleanup
+  return null;
 };
 
 export default usePopularMovies;
