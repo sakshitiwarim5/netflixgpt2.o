@@ -27,7 +27,7 @@ const usePopularMovies = () => {
   useEffect(() => {
     // ✅ Check if movies array is empty, not just falsy
     if (!popularMovies?.length) getPopularMovies();
-  }, [dispatch, popularMovies?.length]); // ✅ Added proper dependencies
+  }, [dispatch, popularMovies?.length]);
 
   return null;
 };
