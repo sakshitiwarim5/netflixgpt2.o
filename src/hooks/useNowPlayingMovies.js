@@ -4,33 +4,24 @@ import { API_OPTIONS } from "../utils/constant";
 import { addNowPlayingMovies } from "../utils/movieSlice";
 
 const useNowPlayingMovies = () => {
-  const dispatch = useDispatch(); // Ensure dispatch is defined
- 
-  const nowPlayingMovies =useSelector(store => store.movies.nowPlayingMovies);
+  // Fetch Data from TMDB API and update store
+  const dispatch = useDispatch();
 
+  const nowPlayingMovies = useSelector(
+    (store) => store.movies.nowPlayingMovies
+  );
 
-
-  const getNowPlaying = async () => {
-    try {
-      const response = await fetch(
-        "https://api.themoviedb.org/3/movie/now_playing?page=1",
-        API_OPTIONS
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const json = await response.json();
-      //   console.log("Fetched Movies:", json); // ✅ Log API response
-      dispatch(addNowPlayingMovies(json.results)); // ✅ Dispatch to Redux store
-    } catch (error) {
-      //   console.error("Error fetching movies:", error);
-    }
+  const getNowPlayingMovies = async () => {
+    const data = await fetch(
+      "https://api.themoviedb.org/3/movie/now_playing?page=1",
+      API_OPTIONS
+    );
+    const json = await data.json();
+    dispatch(addNowPlayingMovies(json.results));
   };
 
   useEffect(() => {
-    !nowPlayingMovies && getNowPlaying();
+    !nowPlayingMovies && getNowPlayingMovies();
   }, []);
 };
 

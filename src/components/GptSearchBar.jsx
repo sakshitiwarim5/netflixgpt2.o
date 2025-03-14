@@ -1,156 +1,87 @@
-import React, { useRef, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import openai from "../utils/Openai";
+import { useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import lang from "../utils/languageConstants";
-import openai from "../utils/Openai"; // Ensure OpenAI is properly configured
 import { API_OPTIONS } from "../utils/constant";
-import { addGptMovieResult } from "../utils/movieSlice";
+import { addGptMovieResult } from "../utils/gptSlice";
 
 const GptSearchBar = () => {
-  const langKey = useSelector((store) => store.config.lang);
   const dispatch = useDispatch();
+  const langKey = useSelector((store) => store.config.lang);
   const searchText = useRef(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
 
-  // Function to fetch movie details from TMDB
+  // search movie in TMDB
   const searchMovieTMDB = async (movie) => {
-    try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(
-          movie
-        )}&include_adult=false&language=en-US&page=1`,
-        API_OPTIONS
-      );
+    const data = await fetch(
+      "https://api.themoviedb.org/3/search/movie?query=" +
+        movie +
+        "&include_adult=false&language=en-US&page=1",
+      API_OPTIONS
+    );
+    const json = await data.json();
 
-      if (response.status === 429) {
-        throw new Error("Rate limit exceeded. Please try again later.");
-      }
-
-      const json = await response.json();
-      return json.results || [];
-    } catch (err) {
-      console.error("TMDB Search Error:", err);
-      return [];
-    }
+    return json.results;
   };
 
-  // Function to extract movie names from GPT response
-  const extractMovieNames = (responseText) => {
-    return responseText
-      .split(",")
-      .map((movie) => movie.replace(/[^a-zA-Z0-9\s]/g, "").trim()) // Remove extra characters
-      .filter((movie) => movie.length > 0);
-  };
-
-  // Function to handle GPT search
   const handleGptSearchClick = async () => {
-    setError(null);
-    const query = searchText.current?.value?.trim();
+    console.log(searchText.current.value);
+    // Make an API call to GPT API and get Movie Results
 
-    if (!query) {
-      setError(
-        lang[langKey]?.searchPlaceholder || "Please enter a search query"
-      );
-      return;
+    const gptQuery =
+      "Act as a Movie Recommendation system and suggest some movies for the query : " +
+      searchText.current.value +
+      ". only give me names of 5 movies, comma seperated like the example result given ahead. Example Result: Gadar, Sholay, Don, Golmaal, Koi Mil Gaya";
+
+    const gptResults = await openai.chat.completions.create({
+      messages: [{ role: "user", content: gptQuery }],
+      model: "gpt-3.5-turbo",
+    });
+
+    if (!gptResults.choices) {
+      // TODO: Write Error Handling
     }
 
-    try {
-      setIsLoading(true);
+    console.log(gptResults.choices?.[0]?.message?.content);
 
-      // GPT API Call
-      const gptResults = await openai.chat.completions.create({
-        messages: [
-          {
-            role: "user",
-            content: `Act as a movie recommendation system. Suggest 5 movies for "${query}". 
-                      Return only comma-separated names. Example format: Movie1,Movie2,Movie3`,
-          },
-        ],
-        model: "gpt-3.5-turbo",
-        max_tokens: 100,
-      });
+    // Andaz Apna Apna, Hera Pheri, Chupke Chupke, Jaane Bhi Do Yaaro, Padosan
+    const gptMovies = gptResults.choices?.[0]?.message?.content.split(",");
 
-      // Validate GPT response
-      if (!gptResults?.choices?.[0]?.message?.content) {
-        throw new Error("Invalid response structure from GPT API");
-      }
+    // ["Andaz Apna Apna", "Hera Pheri", "Chupke Chupke", "Jaane Bhi Do Yaaro", "Padosan"]
 
-      // Process GPT response
-      const gptMovies = extractMovieNames(
-        gptResults.choices[0].message.content
-      );
+    // For each movie I will search TMDB API
 
-      if (gptMovies.length === 0) {
-        throw new Error("No movies found in GPT response");
-      }
+    const promiseArray = gptMovies.map((movie) => searchMovieTMDB(movie));
+    // [Promise, Promise, Promise, Promise, Promise]
 
-      // Parallel TMDB searches
-      const tmdbResults = await Promise.all(
-        gptMovies.map((movie) => searchMovieTMDB(movie))
-      );
+    const tmdbResults = await Promise.all(promiseArray);
 
-      // Filter out empty TMDB results
-      const validResults = tmdbResults.filter((results) => results?.length > 0);
+    console.log(tmdbResults);
 
-      if (validResults.length === 0) {
-        setError("No matching movies found on TMDB. Try another search.");
-        return;
-      }
-
-      // Dispatch results to Redux store
-      dispatch(
-        addGptMovieResult({
-          movieNames: gptMovies,
-          movieResults: tmdbResults,
-        })
-      );
-    } catch (error) {
-      console.error("GPT Search Error:", error);
-      setError(error.message || "Failed to fetch movie recommendations");
-    } finally {
-      setIsLoading(false);
-    }
+    dispatch(
+      addGptMovieResult({ movieNames: gptMovies, movieResults: tmdbResults })
+    );
   };
 
   return (
     <div className="pt-[35%] md:pt-[10%] flex justify-center">
       <form
-        className="w-full md:w-1/2 bg-black grid grid-cols-12 rounded-lg shadow-lg"
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleGptSearchClick();
-        }}
+        className="w-full md:w-1/2 bg-black grid grid-cols-12"
+        onSubmit={(e) => e.preventDefault()}
       >
         <input
-          type="text"
           ref={searchText}
-          className="p-4 m-4 col-span-9 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-          placeholder={
-            lang[langKey]?.gptSearchPlaceholder ||
-            "What would you like to watch today?"
-          }
-          aria-label="Movie search input"
+          type="text"
+          className=" p-4 m-4 col-span-9"
+          placeholder={lang[langKey].gptSearchPlaceholder}
         />
         <button
-          className="col-span-3 m-4 py-2 px-4 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-200 disabled:opacity-50 flex items-center justify-center"
-          type="submit"
-          disabled={isLoading}
+          className="col-span-3 m-4 py-2 px-4 bg-red-700 text-white rounded-lg"
+          onClick={handleGptSearchClick}
         >
-          {isLoading ? (
-            <span className="loader"></span> // Loader animation
-          ) : (
-            lang[langKey]?.search || "Search"
-          )}
+          {lang[langKey].search}
         </button>
       </form>
-
-      {error && (
-        <div className="mt-4 p-4 bg-red-100 text-red-700 rounded-lg">
-          {lang[langKey]?.errorMessage || "Error:"} {error}
-        </div>
-      )}
     </div>
   );
 };
-
 export default GptSearchBar;
