@@ -42,11 +42,11 @@ const Movielist = ({ title, movies = [] }) => {
           ref={scrollRef}
           className="flex overflow-x-auto no-scrollbar scroll-smooth space-x-4 px-2"
         >
-          {movies.map((movie) => (
+          {movies.map((movies) => (
             <MovieCard
-              key={movie.id}
-              posterPath={movie.poster_path}
-              title={movie.title} // ✅ Added fallback props
+              key={movies.id}
+              posterPath={movies.poster_path}
+              title={movies.title} // ✅ Added fallback props
             />
           ))}
         </div>

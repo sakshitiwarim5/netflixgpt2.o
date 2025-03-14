@@ -4,20 +4,20 @@ import VedioBackground from "./VedioBackground";
 import VedioTitle from "./VedioTitle";
 
 const MainContainer = () => {
-  const movie = useSelector((store) => store.movie?.nowPlayingMovies);
+  const movies = useSelector((store) => store.movies?.nowPlayingMovies);
 
-  if (!movie || movie.length === 0) {
+  if (!movies || movies.length === 0) {
     return <p>Loading movies...</p>; // Display a fallback UI while data is being fetched
   }
 
-  const mainMovie = movie[0];
-//   console.log(mainMovie);
-  const { original_title, overview } = mainMovie;
+  const mainMovies = movies[0];
+  //   console.log(mainMovie);
+  const { original_title, overview } = mainMovies;
 
   return (
     <div>
       <VedioTitle title={original_title} overview={overview} />
-      <VedioBackground movieId={mainMovie.id} />
+      <VedioBackground movieId={mainMovies.id} />
     </div>
   );
 };
