@@ -11,10 +11,10 @@ const GptSearchBar = () => {
   const searchText = useRef(null);
 
   // search movie in TMDB
-  const searchMovieTMDB = async (movie) => {
+  const searchMovieTMDB = async (movies) => {
     const data = await fetch(
       "https://api.themoviedb.org/3/search/movie?query=" +
-        movie +
+        movies +
         "&include_adult=false&language=en-US&page=1",
       API_OPTIONS
     );
@@ -50,7 +50,7 @@ const GptSearchBar = () => {
 
     // For each movie I will search TMDB API
 
-    const promiseArray = gptMovies.map((movie) => searchMovieTMDB(movie));
+    const promiseArray = gptMovies.map((movies) => searchMovieTMDB(movies));
     // [Promise, Promise, Promise, Promise, Promise]
 
     const tmdbResults = await Promise.all(promiseArray);

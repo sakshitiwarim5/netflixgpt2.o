@@ -10,6 +10,8 @@ const movieSlice = createSlice({
   },
   reducers: {
     addNowPlayingMovies: (state, action) => {
+      console.log("Dispatched Now Playing Movies:", action.payload); // ✅ Debug
+
       state.nowPlayingMovies = action.payload || [];
     },
     addPopularMovies: (state, action) => {
@@ -19,7 +21,7 @@ const movieSlice = createSlice({
       state.trailerVideos = action.payload || [];
     },
     addGptMovieResult: (state, action) => {
-      state.gptMovieResults = action.payload || []; // ✅ Added missing reducer
+      state.gptMovieResults = action.payload || [];
     },
   },
 });
