@@ -5,7 +5,7 @@ const movieSlice = createSlice({
   initialState: {
     nowPlayingMovies: [],
     trailerVideos: [],
-    popularMovies: [], // ✅ Ensure it's correctly named
+    popularMovies: [],
     gptMovieResults: [],
   },
   reducers: {
