@@ -6,7 +6,7 @@ const movieSlice = createSlice({
     nowPlayingMovies: [],
     trailerVideos: [],
     popularMovies: [], // ✅ Ensure it's correctly named
-    gptMovieResults: [], // ✅ Added this to store GPT results
+    gptMovieResults: [],
   },
   reducers: {
     addNowPlayingMovies: (state, action) => {
