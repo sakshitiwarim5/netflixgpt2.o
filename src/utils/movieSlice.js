@@ -15,7 +15,7 @@ const movieSlice = createSlice({
       state.nowPlayingMovies = action.payload || [];
     },
     addPopularMovies: (state, action) => {
-      state.popularMovies = action.payload || []; // ✅ Fixed property name
+      state.popularMovies = action.payload || [];
     },
     addTrailerVideos: (state, action) => {
       state.trailerVideos = action.payload || [];
