@@ -11,7 +11,6 @@ const MainContainer = () => {
   }
 
   const mainMovies = movies[0];
-  //   console.log(mainMovie);
   const { original_title, overview } = mainMovies;
   console.log("Movies in Redux Store:", movies);
 
